@@ -20,5 +20,4 @@ app.use('/api/users', usersRoutes);
 app.use('/api/tasks', tasksRoutes);
 
 app.use(errorHandler);
-
 export default app;
