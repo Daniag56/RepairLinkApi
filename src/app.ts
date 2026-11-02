@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import { errorHandler } from './middleware/error.js';
 import usersRoutes from './modules/users/users.routes.js';
 import tasksRoutes from './modules/tasks/tasks.routes.js';
-
+import authRoutes from './modules/auth/auth.routes.js';
 
 const app = express();
 
