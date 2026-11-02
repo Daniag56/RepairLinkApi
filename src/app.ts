@@ -18,6 +18,6 @@ app.get('/health', (_req, res) => res.json({ ok: true }));
 
 app.use('/api/users', usersRoutes);
 app.use('/api/tasks', tasksRoutes);
-
+app.use('/api/auth', authRoutes);
 app.use(errorHandler);
 export default app;
