@@ -18,12 +18,28 @@ app.use(cors());
 app.use(express.json());
 app.use(requestLogger);
 
+// CONFIGURACIÓN ORIGINAL DEL PROYECTO
+// Recuperar esta configuración cuando terminemos la prueba
+// de las 200 llamadas y decidamos cómo gestionar /health.
+
+/*
 if (process.env.NODE_ENV !== 'test') {
   app.use(generalLimiter);
 }
 
+app.get('/health', (_req, res) => res.json({ ok: true }));
+*/
+
+
+// CONFIGURACIÓN TEMPORAL PARA LA PRUEBA DE 200 PETICIONES
+// Se coloca /health antes del limitador para que las 200 llamadas
+// de nuestro script no sean bloqueadas por el rate limiting.
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
+
+if (process.env.NODE_ENV !== 'test') {
+  app.use(generalLimiter);
+}
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/users', usersRoutes);
