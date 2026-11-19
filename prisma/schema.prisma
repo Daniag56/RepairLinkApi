@@ -20,6 +20,7 @@ model User {
   passwordHash String
   createdAt    DateTime @default(now())
   tasks        Task[]
+  media        Media[]
 }
 
 model Task {
@@ -30,4 +31,23 @@ model Task {
   createdAt   DateTime @default(now())
   user        User?    @relation(fields: [userId], references: [id])
   userId      Int?
+}
+
+model Media {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publicId     String   @unique
+  secureUrl    String
+  format       String
+  resourceType String
+  bytes        Int
+  width        Int?
+  height       Int?
+  originalName String?
+  folder       String?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
 }
