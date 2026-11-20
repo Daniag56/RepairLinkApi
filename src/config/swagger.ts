@@ -56,13 +56,29 @@ const options: swaggerJsdoc.Options = {
             password: { type: 'string', minLength: 8 },
           },
         },
-        AuthResponse: {
-          type: 'object',
-          properties: {
-            user: { $ref: '#/components/schemas/User' },
-            token: { type: 'string', description: 'JWT token' },
-          },
-        },
+AuthResponse: {
+  type: 'object',
+  required: ['user', 'token'],
+  properties: {
+    user: {
+      $ref: '#/components/schemas/User',
+    },
+    token: {
+      type: 'string',
+      description: 'Token JWT válido durante 7 días. Debe enviarse en la cabecera Authorization como Bearer <token>.',
+      example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    },
+  },
+  example: {
+    user: {
+      id: 1,
+      email: 'usuario@example.com',
+      name: 'Usuario',
+      createdAt: '2026-11-20T10:00:00.000Z',
+    },
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+},
         UpdateProfileInput: {
           type: 'object',
           properties: {
