@@ -2,6 +2,16 @@
 
 Este proyecto implementa una API REST con Node.js, Express y PostgreSQL siguiendo un desarrollo incremental versionado con Git tags.
 
+## 📖 Documentación de la API
+
+La API dispone de documentación interactiva mediante Swagger UI.
+
+Con el servidor en ejecución, puedes acceder a ella desde:
+
+- **Swagger UI:** [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+Desde esta página puedes consultar los endpoints disponibles, sus parámetros, los cuerpos de petición y las respuestas, además de probar las operaciones de la API.
+
 ## 📋 Navegación entre versiones
 
 ### Ver todas las versiones disponibles
