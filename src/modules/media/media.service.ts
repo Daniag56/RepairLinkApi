@@ -61,3 +61,41 @@ export async function uploadMedia(
 
   return media;
 }
+
+export async function listUserMedia(userId: number) {
+  return prisma.media.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+export async function getMediaById(id: number) {
+  return prisma.media.findUnique({
+    where: { id },
+  });
+}
+
+export async function deleteMedia(id: number, userId: number) {
+  const media = await prisma.media.findFirst({
+    where: {
+      id,
+      userId,
+    },
+  });
+
+  if (!media) {
+    return null;
+  }
+
+  await cloudinary.uploader.destroy(media.publicId, {
+    resource_type: media.resourceType as 'image' | 'video' | 'raw',
+  });
+
+  await prisma.media.delete({
+    where: { id },
+  });
+
+  return media;
+}
+
+

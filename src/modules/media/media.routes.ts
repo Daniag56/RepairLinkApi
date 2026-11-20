@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { auth } from '../../middleware/auth.js';
-import { uploadCtrl } from './media.controller.js';
+import { uploadCtrl, listCtrl, getByIdCtrl, deleteCtrl } from './media.controller.js';
 
 const router = Router();
 
@@ -30,5 +30,8 @@ const upload = multer({
 });
 
 router.post('/upload', auth, upload.single('file'), uploadCtrl);
+router.get('/', auth, listCtrl);
+router.get('/:id', auth, getByIdCtrl);
+router.delete('/:id', auth, deleteCtrl);
 
 export default router;
