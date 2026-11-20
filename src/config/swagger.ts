@@ -135,6 +135,25 @@ const options: swaggerJsdoc.Options = {
             },
           },
         },
+
+        Media: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', description: 'ID del archivo multimedia' },
+            userId: { type: 'integer', description: 'ID del usuario propietario' },
+            publicId: { type: 'string', description: 'Identificador en Cloudinary' },
+            secureUrl: { type: 'string', format: 'uri', description: 'URL segura del archivo' },
+            format: { type: 'string', description: 'Formato del archivo' },
+            resourceType: { type: 'string', description: 'Tipo de recurso' },
+            bytes: { type: 'integer', description: 'Tamaño en bytes' },
+            width: { type: 'integer', nullable: true },
+            height: { type: 'integer', nullable: true },
+            originalName: { type: 'string', nullable: true },
+            folder: { type: 'string', nullable: true },
+            createdAt: { type: 'string', format: 'date-time' },
+          },
+        },
+
       },
     },
     tags: [
@@ -149,6 +168,10 @@ const options: swaggerJsdoc.Options = {
       {
         name: 'Tasks',
         description: 'Gestión de tareas',
+      },
+            {
+        name: 'Media',
+        description: 'Gestión de archivos multimedia',
       },
     ],
   },
