@@ -1,11 +1,12 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import type { Role } from '@prisma/client';
 import { env } from '../config/env.js';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: { sub: number; email: string };
+      user?: { sub: number; email: string; role: Role };
     }
   }
 }
@@ -31,10 +32,12 @@ export function auth(req: Request, res: Response, next: NextFunction) {
       payload !== null &&
       'sub' in payload &&
       'email' in payload &&
+      'role' in payload &&
       typeof payload.sub === 'number' &&
-      typeof payload.email === 'string'
+      typeof payload.email === 'string' &&
+      (payload.role === 'CLIENTE' || payload.role === 'TALLER')
     ) {
-      req.user = { sub: payload.sub, email: payload.email };
+      req.user = { sub: payload.sub, email: payload.email, role: payload.role };
       next();
     } else {
       return res.status(401).json({ message: 'Token inválido' });

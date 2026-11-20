@@ -4,8 +4,8 @@
 
   export async function registerCtrl(req: Request, res: Response) {
     try {
-      const { email, name, password } = registerSchema.parse(req.body);
-      const data = await register(email, name, password);
+      const { email, name, password, role } = registerSchema.parse(req.body);
+      const data = await register(email, name, password, role);
       res.status(201).json(data);
     } catch (e: any) {
       if (e.message === 'Email ya registrado') {
