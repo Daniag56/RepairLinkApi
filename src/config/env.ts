@@ -11,5 +11,9 @@ export const env = {
   JWT_SECRET: required(process.env.JWT_SECRET, 'JWT_SECRET'),
   DATABASE_URL: required(process.env.DATABASE_URL, 'DATABASE_URL'),
   BCRYPT_SALT_ROUNDS: Number(process.env.BCRYPT_SALT_ROUNDS ?? 10),
+  CORS_ORIGINS: (process.env.CORS_ORIGINS ?? 'http://localhost:4200')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter((origin) => origin !== ''),
 };
 
