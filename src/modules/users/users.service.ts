@@ -22,6 +22,14 @@ export async function findUserById(id: number) {
   });
 }
 
+export async function getUserOwnerId(id: number) {
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: { id: true },
+  });
+  return user?.id ?? null;
+}
+
 export async function listUsers() {
   return prisma.user.findMany({ 
     select: { id: true, email: true, name: true, role: true, createdAt: true },

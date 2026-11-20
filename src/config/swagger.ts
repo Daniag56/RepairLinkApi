@@ -115,11 +115,10 @@ const options: swaggerJsdoc.Options = {
         },
         CreateTaskInput: {
           type: 'object',
-          required: ['title', 'userId'],
+          required: ['title'],
           properties: {
             title: { type: 'string', minLength: 3 },
             description: { type: 'string', maxLength: 500 },
-            userId: { type: 'integer', minimum: 1 },
           },
         },
         UpdateTaskInput: {

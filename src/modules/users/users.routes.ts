@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { requireRole } from '../../middleware/role.js';
+import { requireOwner } from '../../middleware/owner.js';
 import { validate } from '../../middleware/validate.js';
 import { updateUserSchema, updateProfileSchema, changePasswordSchema } from './users.schema.js';
 import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl } from './users.controller.js';
+import { getUserOwnerId } from './users.service.js';
 
 const router = Router();
 
@@ -173,6 +175,12 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: El usuario es otro
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Usuario no encontrado
  *         content:
@@ -216,6 +224,12 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: El usuario es otro
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Usuario no encontrado
  *         content:
@@ -255,6 +269,12 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: El usuario es otro
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Usuario no encontrado
  *         content:
@@ -262,9 +282,9 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:id', auth, getUserCtrl);
-router.patch('/:id', auth, validate(updateUserSchema), updateUserCtrl);
-router.delete('/:id', auth, deleteUserCtrl);
+router.get('/:id', auth, requireOwner(getUserOwnerId, 'Usuario no encontrado'), getUserCtrl);
+router.patch('/:id', auth, requireOwner(getUserOwnerId, 'Usuario no encontrado'), validate(updateUserSchema), updateUserCtrl);
+router.delete('/:id', auth, requireOwner(getUserOwnerId, 'Usuario no encontrado'), deleteUserCtrl);
 
 export default router;
 
