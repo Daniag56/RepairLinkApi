@@ -4,6 +4,7 @@ import app from '../app.js';
 describe('Users Endpoints', () => {
   let authToken: string;
   let userId: number;
+  let tallerToken: string;
   
   const testUser = {
     email: `testuser${Date.now()}@example.com`,
@@ -18,16 +19,31 @@ describe('Users Endpoints', () => {
     
     authToken = res.body.token;
     userId = res.body.user.id;
+
+    const tallerRes = await request(app)
+      .post('/api/auth/register')
+      .send({ ...testUser, email: `testtaller${Date.now()}@example.com`, role: 'TALLER' });
+
+    tallerToken = tallerRes.body.token;
   });
 
   describe('GET /api/users', () => {
-    it('debe listar usuarios con autenticación', async () => {
+    it('debe listar usuarios si es un taller', async () => {
+      const res = await request(app)
+        .get('/api/users')
+        .set('Authorization', `Bearer ${tallerToken}`);
+
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+    });
+
+    it('debe dar 403 si es un cliente', async () => {
       const res = await request(app)
         .get('/api/users')
         .set('Authorization', `Bearer ${authToken}`);
 
-      expect(res.status).toBe(200);
-      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.status).toBe(403);
+      expect(res.body.message).toBe('Acceso denegado');
     });
 
     it('debe fallar sin autenticación', async () => {

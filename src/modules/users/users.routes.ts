@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
+import { requireRole } from '../../middleware/role.js';
 import { validate } from '../../middleware/validate.js';
 import { updateUserSchema, updateProfileSchema, changePasswordSchema } from './users.schema.js';
 import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl } from './users.controller.js';
@@ -10,7 +11,7 @@ const router = Router();
  * @swagger
  * /api/users:
  *   get:
- *     summary: Lista todos los usuarios
+ *     summary: Lista todos los usuarios (solo taller)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -29,8 +30,14 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: El usuario no es un taller
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.get('/', auth, listUsersCtrl);
+router.get('/', auth, requireRole('TALLER'), listUsersCtrl);
 
 /**
  * @swagger
