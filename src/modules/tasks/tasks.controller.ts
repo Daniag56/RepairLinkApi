@@ -13,7 +13,7 @@ export async function createTaskCtrl(req: Request, res: Response) {
     if (error.code === 'P2003') {
       return res.status(400).json({ message: 'El usuario indicado no existe' });
     }
-    return res.status(500).json({ message: 'Error interno del servidor' });
+    throw error;
   }
 }
 
@@ -59,7 +59,7 @@ export async function updateTaskCtrl(req: Request, res: Response) {
     if (error.code === 'P2003') {
       return res.status(400).json({ message: 'El usuario indicado no existe' });
     }
-    return res.status(500).json({ message: 'Error interno del servidor' });
+    throw error;
   }
 }
 
@@ -77,6 +77,6 @@ export async function deleteTaskCtrl(req: Request, res: Response) {
     if (error.code === 'P2025') {
       return res.status(404).json({ message: 'Tarea no encontrada' });
     }
-    return res.status(500).json({ message: 'Error interno del servidor' });
+    throw error;
   }
 }

@@ -6,7 +6,7 @@ export async function listUsersCtrl(_req: Request, res: Response) {
     const users = await listUsers();
     res.json(users);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    throw error;
   }
 }
 
@@ -24,7 +24,7 @@ export async function getUserCtrl(req: Request, res: Response) {
     
     res.json(user);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    throw error;
   }
 }
 
@@ -47,7 +47,7 @@ export async function meCtrl(req: Request, res: Response) {
       createdAt: user.createdAt
     });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    throw error;
   }
 }
 
@@ -68,7 +68,7 @@ export async function updateUserCtrl(req: Request, res: Response) {
     if (error.code === 'P2002') {
       return res.status(409).json({ message: 'El email ya está en uso' });
     }
-    res.status(500).json({ message: error.message });
+    throw error;
   }
 }
 
@@ -85,7 +85,7 @@ export async function deleteUserCtrl(req: Request, res: Response) {
     if (error.code === 'P2025') {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-    res.status(500).json({ message: error.message });
+    throw error;
   }
 }
 
@@ -101,7 +101,7 @@ export async function updateProfileCtrl(req: Request, res: Response) {
     if (error.code === 'P2002') {
       return res.status(409).json({ message: 'El email ya está en uso' });
     }
-    res.status(500).json({ message: error.message });
+    throw error;
   }
 }
 
@@ -122,7 +122,7 @@ export async function changePasswordCtrl(req: Request, res: Response) {
     if (error.message === 'Contraseña actual incorrecta') {
       return res.status(400).json({ message: error.message });
     }
-    res.status(500).json({ message: error.message });
+    throw error;
   }
 }
 
