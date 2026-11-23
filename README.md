@@ -2,6 +2,16 @@
 
 Este proyecto implementa una API REST con Node.js, Express y PostgreSQL siguiendo un desarrollo incremental versionado con Git tags.
 
+## 📖 Documentación de la API
+
+La API dispone de documentación interactiva mediante Swagger UI.
+
+Con el servidor en ejecución, puedes acceder a ella desde:
+
+- **Swagger UI:** [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+Desde esta página puedes consultar los endpoints disponibles, sus parámetros, los cuerpos de petición y las respuestas, además de probar las operaciones de la API.
+
 ## 📋 Navegación entre versiones
 
 ### Ver todas las versiones disponibles
@@ -205,6 +215,130 @@ docker run -p 3000:3000 api-express
 ```
 
 ---
+
+## 🗄️ Configuración de bases de datos
+
+El backend permite trabajar con dos opciones de PostgreSQL:
+
+- **PostgreSQL local mediante Docker:** recomendado para desarrollo local.
+- **PostgreSQL alojado en Supabase:** permite trabajar con una base de datos compartida en la nube.
+
+### Requisitos previos
+
+- Node.js y npm.
+- Docker Desktop (para utilizar PostgreSQL local).
+- Acceso al proyecto de Supabase (para utilizar PostgreSQL alojado).
+
+### 1. Instalar dependencias
+
+Clona el repositorio e instala las dependencias:
+
+```bash
+git clone <repository>
+cd RepairLinkApi
+npm install
+```
+
+### 2. Configurar las variables de entorno
+
+Copia el archivo de ejemplo:
+
+```bash
+cp .env.example .env
+```
+
+En Windows PowerShell puedes utilizar:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Configura las variables de conexión en `.env`:
+
+```env
+DATABASE_URL="URL_DE_CONEXION"
+DIRECT_URL="URL_DE_CONEXION_DIRECTA"
+```
+
+**Importante:** el archivo `.env` contiene credenciales privadas. No debe subirse a GitHub ni compartirse con otros usuarios.
+
+### 3. Utilizar PostgreSQL local con Docker
+
+Para iniciar la base de datos local:
+
+```bash
+docker compose up -d
+```
+
+Configura `DATABASE_URL` con la dirección de PostgreSQL local definida en `docker-compose.yml`.
+
+Mantén `DIRECT_URL` configurada según la conexión local cuando sea necesaria.
+
+### 4. Utilizar PostgreSQL alojado en Supabase
+
+Crea un proyecto en Supabase y obtén las cadenas de conexión desde la opción **Connect**.
+
+Configura:
+
+- `DATABASE_URL`: conexión Transaction Pooler.
+- `DIRECT_URL`: conexión Session Pooler, para las operaciones de migración.
+
+Introduce ambas direcciones en el archivo `.env`, sustituyendo los valores de ejemplo por las credenciales de tu proyecto.
+
+No incluyas las credenciales reales en `.env.example`.
+
+### 5. Aplicar las migraciones
+
+Una vez configurada la conexión a la base de datos deseada, ejecuta:
+
+```bash
+npx prisma migrate deploy
+```
+
+Para comprobar el estado de las migraciones:
+
+```bash
+npx prisma migrate status
+```
+
+### 6. Arrancar el backend
+
+```bash
+npm run dev
+```
+
+La API estará disponible en:
+
+```text
+http://localhost:3000
+```
+
+La documentación interactiva estará disponible en:
+
+```text
+http://localhost:3000/api-docs
+```
+
+### 7. Ejecutar los tests
+
+```bash
+npm test
+```
+
+Los tests utilizan la configuración de `.env.test`, independiente de la conexión principal de desarrollo.
+
+### 8. Configuración en otro ordenador
+
+Cada integrante del equipo debe:
+
+1. Clonar el repositorio.
+2. Ejecutar `npm install`.
+3. Crear su propio archivo `.env` a partir de `.env.example`.
+4. Configurar las variables de entorno con las credenciales facilitadas de forma segura.
+5. Aplicar las migraciones con `npx prisma migrate deploy`.
+6. Arrancar el backend con `npm run dev`.
+
+Las credenciales de Supabase deben compartirse de forma segura y nunca mediante commits o archivos públicos.
 
 ## 🚀 Inicio rápido
 

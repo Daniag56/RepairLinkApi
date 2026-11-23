@@ -22,5 +22,8 @@ export const env = {
     .split(',')
     .map((origin) => origin.trim())
     .filter((origin) => origin !== ''),
+  CLOUDINARY_CLOUD_NAME: required(process.env.CLOUDINARY_CLOUD_NAME, 'CLOUDINARY_CLOUD_NAME'),
+  CLOUDINARY_API_KEY: required(process.env.CLOUDINARY_API_KEY, 'CLOUDINARY_API_KEY'),
+  CLOUDINARY_API_SECRET: required(process.env.CLOUDINARY_API_SECRET, 'CLOUDINARY_API_SECRET'),
 };
 

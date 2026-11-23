@@ -9,6 +9,7 @@ import authRoutes from './modules/auth/auth.routes.js';
 import swaggerUi from 'swagger-ui-express';
 import { env } from './config/env.js';
 import { swaggerSpec } from './config/swagger.js';
+import mediaRoutes from './modules/media/media.routes.js';
 
 const app = express();
 
@@ -43,6 +44,7 @@ if (process.env.NODE_ENV !== 'test') {
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/users', usersRoutes);
 app.use('/api/tasks', tasksRoutes);
+app.use('/api/media', mediaRoutes);
 
 if (process.env.NODE_ENV !== 'test') {
   app.use('/api/auth', authLimiter, authRoutes);
