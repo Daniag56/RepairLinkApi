@@ -2,8 +2,12 @@ import type { Request, Response } from 'express';
 import { createTask, listTasks, findTaskById, updateTask, deleteTask } from './tasks.service.js';
 
 export async function createTaskCtrl(req: Request, res: Response) {
+  if (!req.user) {
+    return res.status(401).json({ message: 'No autorizado' });
+  }
+
   try {
-    const task = await createTask(req.body);
+    const task = await createTask({ ...req.body, userId: req.user.sub });
     return res.status(201).json(task);
   } catch (error: any) {
     if (error.code === 'P2003') {
@@ -13,8 +17,12 @@ export async function createTaskCtrl(req: Request, res: Response) {
   }
 }
 
-export async function listTasksCtrl(_req: Request, res: Response) {
-  const tasks = await listTasks();
+export async function listTasksCtrl(req: Request, res: Response) {
+  if (!req.user) {
+    return res.status(401).json({ message: 'No autorizado' });
+  }
+
+  const tasks = await listTasks(req.user.sub);
   return res.json(tasks);
 }
 

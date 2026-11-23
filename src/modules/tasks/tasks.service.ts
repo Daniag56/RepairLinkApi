@@ -14,8 +14,9 @@ export async function createTask(data: {
   });
 }
 
-export async function listTasks() {
+export async function listTasks(userId: number) {
   return prisma.task.findMany({
+    where: { userId },
     orderBy: { id: 'asc' },
   });
 }
@@ -24,6 +25,14 @@ export async function findTaskById(id: number) {
   return prisma.task.findUnique({
     where: { id },
   });
+}
+
+export async function getTaskOwnerId(id: number) {
+  const task = await prisma.task.findUnique({
+    where: { id },
+    select: { userId: true },
+  });
+  return task?.userId ?? null;
 }
 
 export async function updateTask(id: number, data: {

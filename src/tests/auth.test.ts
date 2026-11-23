@@ -1,4 +1,5 @@
 import request from 'supertest';
+import jwt from 'jsonwebtoken';
 import app from '../app.js';
 
 describe('Auth Endpoints', () => {
@@ -56,6 +57,42 @@ describe('Auth Endpoints', () => {
 
       expect(res.status).toBe(400);
     });
+
+    it('debe registrar como CLIENTE si no se indica rol', async () => {
+      const res = await request(app)
+        .post('/api/auth/register')
+        .send({ ...testUser, email: `cliente${Date.now()}@example.com` });
+
+      expect(res.status).toBe(201);
+      expect(res.body.user.role).toBe('CLIENTE');
+    });
+
+    it('debe registrar un taller', async () => {
+      const res = await request(app)
+        .post('/api/auth/register')
+        .send({ ...testUser, email: `taller${Date.now()}@example.com`, role: 'TALLER' });
+
+      expect(res.status).toBe(201);
+      expect(res.body.user.role).toBe('TALLER');
+    });
+
+    it('debe fallar con un rol que no existe', async () => {
+      const res = await request(app)
+        .post('/api/auth/register')
+        .send({ ...testUser, email: `admin${Date.now()}@example.com`, role: 'ADMIN' });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('debe meter el rol en el token', async () => {
+      const res = await request(app)
+        .post('/api/auth/register')
+        .send({ ...testUser, email: `token${Date.now()}@example.com`, role: 'TALLER' });
+
+      const payload = jwt.decode(res.body.token, { json: true });
+      expect(payload?.sub).toBe(res.body.user.id);
+      expect(payload?.role).toBe('TALLER');
+    });
   });
 
   describe('POST /api/auth/login', () => {
@@ -78,6 +115,7 @@ describe('Auth Endpoints', () => {
       expect(res.body).toHaveProperty('user');
       expect(res.body).toHaveProperty('token');
       expect(res.body.user.email).toBe(loginUser.email);
+      expect(res.body.user.role).toBe('CLIENTE');
     });
 
     it('debe fallar con contraseña incorrecta', async () => {

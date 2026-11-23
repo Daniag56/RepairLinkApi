@@ -4,6 +4,8 @@ import app from '../app.js';
 describe('Users Endpoints', () => {
   let authToken: string;
   let userId: number;
+  let tallerToken: string;
+  let otroId: number;
   
   const testUser = {
     email: `testuser${Date.now()}@example.com`,
@@ -18,16 +20,32 @@ describe('Users Endpoints', () => {
     
     authToken = res.body.token;
     userId = res.body.user.id;
+
+    const tallerRes = await request(app)
+      .post('/api/auth/register')
+      .send({ ...testUser, email: `testtaller${Date.now()}@example.com`, role: 'TALLER' });
+
+    tallerToken = tallerRes.body.token;
+    otroId = tallerRes.body.user.id;
   });
 
   describe('GET /api/users', () => {
-    it('debe listar usuarios con autenticación', async () => {
+    it('debe listar usuarios si es un taller', async () => {
+      const res = await request(app)
+        .get('/api/users')
+        .set('Authorization', `Bearer ${tallerToken}`);
+
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+    });
+
+    it('debe dar 403 si es un cliente', async () => {
       const res = await request(app)
         .get('/api/users')
         .set('Authorization', `Bearer ${authToken}`);
 
-      expect(res.status).toBe(200);
-      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.status).toBe(403);
+      expect(res.body.message).toBe('Acceso denegado');
     });
 
     it('debe fallar sin autenticación', async () => {
@@ -156,6 +174,50 @@ describe('Users Endpoints', () => {
         .set('Authorization', `Bearer ${authToken}`);
 
       expect(res.status).toBe(404);
+    });
+
+    it('debe dar 403 al leer a otro usuario', async () => {
+      const res = await request(app)
+        .get(`/api/users/${otroId}`)
+        .set('Authorization', `Bearer ${authToken}`);
+
+      expect(res.status).toBe(403);
+      expect(res.body.message).toBe('Acceso denegado');
+    });
+  });
+
+  describe('PATCH y DELETE /api/users/:id', () => {
+    it('debe dar 403 al cambiar a otro usuario', async () => {
+      const res = await request(app)
+        .patch(`/api/users/${otroId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({ name: 'Hackeado' });
+
+      expect(res.status).toBe(403);
+    });
+
+    it('debe dar 403 al borrar a otro usuario', async () => {
+      const res = await request(app)
+        .delete(`/api/users/${otroId}`)
+        .set('Authorization', `Bearer ${authToken}`);
+
+      expect(res.status).toBe(403);
+
+      const sigue = await request(app)
+        .get(`/api/users/${otroId}`)
+        .set('Authorization', `Bearer ${tallerToken}`);
+
+      expect(sigue.status).toBe(200);
+    });
+
+    it('debe dejar cambiarse a uno mismo', async () => {
+      const res = await request(app)
+        .patch(`/api/users/${userId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({ name: 'Nombre Propio' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.name).toBe('Nombre Propio');
     });
   });
 });

@@ -36,6 +36,7 @@ const options: swaggerJsdoc.Options = {
             id: { type: 'integer', description: 'ID del usuario' },
             email: { type: 'string', format: 'email', description: 'Email del usuario' },
             name: { type: 'string', description: 'Nombre del usuario' },
+            role: { type: 'string', enum: ['CLIENTE', 'TALLER'], description: 'Rol del usuario' },
             createdAt: { type: 'string', format: 'date-time', description: 'Fecha de creación' },
           },
         },
@@ -46,6 +47,7 @@ const options: swaggerJsdoc.Options = {
             email: { type: 'string', format: 'email' },
             name: { type: 'string', minLength: 2 },
             password: { type: 'string', minLength: 8 },
+            role: { type: 'string', enum: ['CLIENTE', 'TALLER'], default: 'CLIENTE' },
           },
         },
         LoginInput: {
@@ -129,11 +131,10 @@ AuthResponse: {
         },
         CreateTaskInput: {
           type: 'object',
-          required: ['title', 'userId'],
+          required: ['title'],
           properties: {
             title: { type: 'string', minLength: 3 },
             description: { type: 'string', maxLength: 500 },
-            userId: { type: 'integer', minimum: 1 },
           },
         },
         UpdateTaskInput: {
