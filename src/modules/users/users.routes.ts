@@ -26,6 +26,11 @@ const router = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/User'
+ *             example:
+ *               - id: 1
+ *                 email: usuario@example.com
+ *                 name: Usuario
+ *                 createdAt: '2026-11-20T10:00:00.000Z'
  *       401:
  *         description: No autorizado
  *         content:
@@ -34,6 +39,8 @@ const router = Router();
  *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: El usuario no es un taller
+ *       500:
+ *         description: Error interno del servidor
  *         content:
  *           application/json:
  *             schema:
@@ -56,12 +63,30 @@ router.get('/', auth, requireRole('TALLER'), listUsersCtrl);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *             example:
+ *               id: 1
+ *               email: usuario@example.com
+ *               name: Usuario
+ *               createdAt: '2026-11-20T10:00:00.000Z'
  *       401:
  *         description: No autorizado
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *
  *   patch:
  *     summary: Actualiza el perfil del usuario autenticado
  *     tags: [Users]
@@ -73,6 +98,9 @@ router.get('/', auth, requireRole('TALLER'), listUsersCtrl);
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/UpdateProfileInput'
+ *           example:
+ *             name: Nuevo Nombre
+ *             email: nuevo@example.com
  *     responses:
  *       200:
  *         description: Perfil actualizado
@@ -80,6 +108,11 @@ router.get('/', auth, requireRole('TALLER'), listUsersCtrl);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *             example:
+ *               id: 1
+ *               email: nuevo@example.com
+ *               name: Nuevo Nombre
+ *               createdAt: '2026-11-20T10:00:00.000Z'
  *       400:
  *         description: Datos de entrada inválidos
  *         content:
@@ -94,6 +127,12 @@ router.get('/', auth, requireRole('TALLER'), listUsersCtrl);
  *               $ref: '#/components/schemas/Error'
  *       409:
  *         description: Email ya en uso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error interno del servidor
  *         content:
  *           application/json:
  *             schema:
@@ -116,6 +155,9 @@ router.patch('/me', auth, validate(updateProfileSchema), updateProfileCtrl);
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/ChangePasswordInput'
+ *           example:
+ *             currentPassword: Password123
+ *             newPassword: NewPassword123
  *     responses:
  *       200:
  *         description: Contraseña actualizada correctamente
@@ -126,6 +168,8 @@ router.patch('/me', auth, validate(updateProfileSchema), updateProfileCtrl);
  *               properties:
  *                 message:
  *                   type: string
+ *             example:
+ *               message: Contraseña actualizada correctamente
  *       400:
  *         description: Contraseña actual incorrecta o datos inválidos
  *         content:
@@ -134,6 +178,12 @@ router.patch('/me', auth, validate(updateProfileSchema), updateProfileCtrl);
  *               $ref: '#/components/schemas/Error'
  *       401:
  *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error interno del servidor
  *         content:
  *           application/json:
  *             schema:
@@ -156,6 +206,7 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           type: integer
  *         required: true
  *         description: ID del usuario
+ *         example: 1
  *     responses:
  *       200:
  *         description: Información del usuario
@@ -163,6 +214,11 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *             example:
+ *               id: 1
+ *               email: usuario@example.com
+ *               name: Usuario
+ *               createdAt: '2026-11-20T10:00:00.000Z'
  *       400:
  *         description: ID inválido
  *         content:
@@ -187,6 +243,13 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *
  *   patch:
  *     summary: Actualiza un usuario por ID
  *     tags: [Users]
@@ -199,12 +262,16 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           type: integer
  *         required: true
  *         description: ID del usuario a actualizar
+ *         example: 1
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/UpdateProfileInput'
+ *           example:
+ *             name: Nuevo Nombre
+ *             email: nuevo@example.com
  *     responses:
  *       200:
  *         description: Usuario actualizado
@@ -242,6 +309,13 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *
  *   delete:
  *     summary: Elimina un usuario por ID
  *     tags: [Users]
@@ -254,6 +328,7 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           type: integer
  *         required: true
  *         description: ID del usuario a eliminar
+ *         example: 1
  *     responses:
  *       204:
  *         description: Usuario eliminado exitosamente
@@ -281,10 +356,15 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get('/:id', auth, requireOwner(getUserOwnerId, 'Usuario no encontrado'), getUserCtrl);
 router.patch('/:id', auth, requireOwner(getUserOwnerId, 'Usuario no encontrado'), validate(updateUserSchema), updateUserCtrl);
 router.delete('/:id', auth, requireOwner(getUserOwnerId, 'Usuario no encontrado'), deleteUserCtrl);
 
 export default router;
-

@@ -15,6 +15,7 @@ import {
 
 const router = Router();
 
+
 /**
  * @swagger
  * /api/tasks:
@@ -25,15 +26,26 @@ const router = Router();
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de tareas
+ *         description: Lista de tareas obtenida correctamente. Devuelve un array, que puede estar vacío.
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Task'
- *       401:
- *         description: No autorizado
+ *             example:
+ *               - id: 1
+ *                 title: Reparar bicicleta
+ *                 description: Revisar los frenos
+ *                 done: false
+ *                 createdAt: '2026-11-20T10:00:00.000Z'
+ *                 userId: 1
+ *               - id: 2
+ *                 title: Revisar motor
+ *                 description: Cambio de aceite
+ *                 done: true
+ *                 createdAt: '2026-11-20T11:00:00.000Z'
+ *                 userId: 2
  */
 router.get('/', auth, listTasksCtrl);
 

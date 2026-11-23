@@ -58,13 +58,29 @@ const options: swaggerJsdoc.Options = {
             password: { type: 'string', minLength: 8 },
           },
         },
-        AuthResponse: {
-          type: 'object',
-          properties: {
-            user: { $ref: '#/components/schemas/User' },
-            token: { type: 'string', description: 'JWT token' },
-          },
-        },
+AuthResponse: {
+  type: 'object',
+  required: ['user', 'token'],
+  properties: {
+    user: {
+      $ref: '#/components/schemas/User',
+    },
+    token: {
+      type: 'string',
+      description: 'Token JWT válido durante 7 días. Debe enviarse en la cabecera Authorization como Bearer <token>.',
+      example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    },
+  },
+  example: {
+    user: {
+      id: 1,
+      email: 'usuario@example.com',
+      name: 'Usuario',
+      createdAt: '2026-11-20T10:00:00.000Z',
+    },
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+},
         UpdateProfileInput: {
           type: 'object',
           properties: {
@@ -136,6 +152,25 @@ const options: swaggerJsdoc.Options = {
             },
           },
         },
+
+        Media: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', description: 'ID del archivo multimedia' },
+            userId: { type: 'integer', description: 'ID del usuario propietario' },
+            publicId: { type: 'string', description: 'Identificador en Cloudinary' },
+            secureUrl: { type: 'string', format: 'uri', description: 'URL segura del archivo' },
+            format: { type: 'string', description: 'Formato del archivo' },
+            resourceType: { type: 'string', description: 'Tipo de recurso' },
+            bytes: { type: 'integer', description: 'Tamaño en bytes' },
+            width: { type: 'integer', nullable: true },
+            height: { type: 'integer', nullable: true },
+            originalName: { type: 'string', nullable: true },
+            folder: { type: 'string', nullable: true },
+            createdAt: { type: 'string', format: 'date-time' },
+          },
+        },
+
       },
     },
     tags: [
@@ -150,6 +185,10 @@ const options: swaggerJsdoc.Options = {
       {
         name: 'Tasks',
         description: 'Gestión de tareas',
+      },
+            {
+        name: 'Media',
+        description: 'Gestión de archivos multimedia',
       },
     ],
   },
