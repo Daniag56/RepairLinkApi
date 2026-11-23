@@ -1,9 +1,11 @@
 import express from 'express';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
+import { jest } from '@jest/globals';
 import { auth } from '../middleware/auth.js';
 import { requireRole } from '../middleware/role.js';
 import { env } from '../config/env.js';
+import { logger } from '../utils/logger.js';
 
 const app = express();
 app.get('/solo-taller', auth, requireRole('TALLER'), (_req, res) => res.json({ ok: true }));
@@ -45,6 +47,17 @@ describe('Middleware de rol', () => {
 
     expect(res.status).toBe(403);
     expect(res.body.message).toBe('Acceso denegado');
+  });
+
+  it('deja en el log el acceso denegado', async () => {
+    const aviso = jest.spyOn(logger, 'warn');
+
+    await request(app)
+      .get('/solo-taller')
+      .set('Authorization', `Bearer ${clienteToken}`);
+
+    expect(aviso).toHaveBeenCalledWith(expect.stringContaining('Acceso denegado por rol: usuario 1 (CLIENTE)'));
+    aviso.mockRestore();
   });
 
   it('un taller no puede entrar en una ruta del cliente', async () => {

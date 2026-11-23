@@ -1,6 +1,8 @@
  import type { Request, Response } from 'express';
+  import { ZodError } from 'zod';
   import { register, login } from './auth.service.js';
   import { registerSchema, loginSchema } from '../users/users.schema.js';
+  import { logger } from '../../utils/logger.js';
 
   export async function registerCtrl(req: Request, res: Response) {
     try {
@@ -11,7 +13,10 @@
       if (e.message === 'Email ya registrado') {
         return res.status(409).json({ message: e.message });
       }
-      res.status(400).json({ message: e.message });
+      if (e instanceof ZodError) {
+        return res.status(400).json({ message: 'Datos inválidos' });
+      }
+      throw e;
     }
   }
 
@@ -22,8 +27,12 @@
       res.json(data);
     } catch (e: any) {
       if (e.message === 'Credenciales inválidas') {
+        logger.warn(`Login fallido para ${req.body.email} desde ${req.ip}`);
         return res.status(401).json({ message: e.message });
       }
-      res.status(400).json({ message: e.message });
+      if (e instanceof ZodError) {
+        return res.status(400).json({ message: 'Datos inválidos' });
+      }
+      throw e;
     }
   }

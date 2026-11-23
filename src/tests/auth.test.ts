@@ -1,6 +1,8 @@
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
+import { jest } from '@jest/globals';
 import app from '../app.js';
+import { logger } from '../utils/logger.js';
 
 describe('Auth Endpoints', () => {
   const testUser = {
@@ -132,6 +134,18 @@ describe('Auth Endpoints', () => {
 
       expect(res.status).toBe(401);
       expect(res.body.message).toBe('Credenciales inválidas');
+    });
+
+    it('debe dejar en el log el login fallido', async () => {
+      const aviso = jest.spyOn(logger, 'warn');
+      const email = `log${Date.now()}@example.com`;
+
+      await request(app)
+        .post('/api/auth/login')
+        .send({ email, password: 'password123' });
+
+      expect(aviso).toHaveBeenCalledWith(expect.stringContaining(`Login fallido para ${email}`));
+      aviso.mockRestore();
     });
 
     it('debe fallar con email inexistente', async () => {

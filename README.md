@@ -363,6 +363,17 @@ npm run dev
 
 Cada versión incluye su propio README con detalles específicos de implementación y decisiones de diseño tomadas.
 
+## 🔒 Seguridad
+
+- **Roles y propietario:** `requireRole` (401 sin token, 403 si el rol no es el pedido) y `requireOwner` (404 si no existe, 403 si es de otro usuario).
+- **CORS:** solo se aceptan los orígenes de `CORS_ORIGINS` (separados por comas). Las peticiones sin `Origin`, como las de la app Android, pasan. Un origen no permitido recibe 403.
+- **Helmet:** cabeceras de seguridad en toda la API. En `/api-docs` se quita solo la Content-Security-Policy para que cargue Swagger UI.
+- **Rate limiting:** 100 peticiones cada 15 minutos por IP y 5 intentos fallidos de login o registro cada 15 minutos (después, 429).
+- **Logs:** los logins fallidos, los accesos denegados (rol o propietario) y los límites superados se guardan con Winston.
+- **Errores:** en un 500 la respuesta solo dice "Error interno del servidor"; el detalle va al log. En `development` se muestra el mensaje.
+- **Secretos:** `.env` no se sube. En producción `JWT_SECRET` es obligatorio y de al menos 32 caracteres. Para generar uno: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
+- **Dependencias:** `npm audit fix` aplicado. Quedan avisos en `prisma` (solo se arreglan con Prisma 7) y en `swagger-jsdoc` (lee los archivos de rutas al arrancar), que necesitan cambios de versión mayor.
+
 ## 🔧 Tecnologías
 
 - Node.js + TypeScript

@@ -1,6 +1,5 @@
 import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
+import { securityHeaders, corsPolicy } from './middleware/security.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { errorHandler } from './middleware/error.js';
 import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
@@ -14,8 +13,8 @@ import mediaRoutes from './modules/media/media.routes.js';
 
 const app = express();
 
-app.use(helmet());
-app.use(cors());
+app.use(securityHeaders);
+app.use(corsPolicy);
 app.use(express.json());
 app.use(requestLogger);
 
